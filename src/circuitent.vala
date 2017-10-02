@@ -212,20 +212,32 @@ public class CircuitentDrawingSurface : DrawingArea
      }
  }
 
+/*
+public class MainWindow : Gtk.Window
+{
+    public MainWindow(Gtk.Application application)
+    {
+        Object
+        (
+            application: application,
+            height_request: 500,
+            icon_name: "com.github.benpocalypse.circuitent",
+            resizable: true,
+            title: _("Circuitent"),
+            width_request: 700
+        );
+    }
+}
+*/
+
 public class Main : Gtk.Application
 {
     int iButtonMode = 0;
 
      public Main ()
      {
-        Object(
-             application: application,
-             height_request: 500,
-             icon_name: "com.github.benpocalypse.circuitent",
-             resizable: true,
-             title: _("Circuitent"),
-             width_request: 700
-             );
+        Object(application_id: "com.github.benpocalypse.circuitent",
+             flags: ApplicationFlags.FLAGS_NONE);
      }
 
      protected override void activate ()
@@ -233,7 +245,7 @@ public class Main : Gtk.Application
          // create the window of this application and show it
          Gtk.ApplicationWindow window = new Gtk.ApplicationWindow (this);
          window.set_default_size (800, 600);
-         window.icon = new Gdk.Pixbuf.from_file ("data/images/icon-128.png");
+         //window.icon = new Gdk.Pixbuf.from_file ("data/images/icon-128.png");
          //window.icon = IconTheme.get_default ().load_icon ("go-home", 128, 0);
          //var icon = new Gtk.Image.from_icon_name ("media-playback-start-symbolic", Gtk.IconSize.DND);
          //window.icon = icon.get_pixbuf ();
