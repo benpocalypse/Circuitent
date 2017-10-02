@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2017 Ben Foote <ben.foote@gmail.com> -->
+<component type="desktop">
+  <id>com.github.benpocalypse.circuitente.desktop</id>
+  <metadata_license>GPL-3.0+</metadata_license>
+  <project_license>GPL-3.0+</project_license>
+  <name>Circuitent</name>
+  <summary>Create and edit printed circuit boards.</summary>
+  <description>
+    <p>Use Circuitent to design and manufacture printed circuit boards using modern, open source, software.</p>
+  </description>
+  <custom>
+     <value key="x-appcenter-color-primary">#603461</value>
+     <value key="x-appcenter-color-primary-text">rgb(255, 255, 255)</value>
+     <value key="x-appcenter-suggested-price">5</value>
+  </custom>
+</component>
+
