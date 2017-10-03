@@ -1,11 +1,10 @@
 [Desktop Entry]
 Name=Circuitent
-GenericName=Printed Circuit Board editor
 Comment=Create and edit circuit boards using modern, open source, software.
-Categories=Science;Engineering;
 Exec=com.github.benpocalypse.circuitent
 Icon=com.github.benpocalypse.circuitent
+Keywords=PCB;Editor;Printed;Circuit;Board;
 Terminal=false
 Type=Application
-X-GNOME-Gettext-Domain=circuitent
-Keywords=PCB;Editor;Printed;Circuit;Board;
+StartupNotify=true
+Categories=Science;Engineering;

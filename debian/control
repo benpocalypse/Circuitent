@@ -1,0 +1,15 @@
+Source: Circuitent
+Section: x11
+Priority: extra
+Maintainer: Ben Footer <ben.foote@gmail.com>
+Build-Depends: cmake (>= 2.8),
+               debhelper (>= 9),
+               libgtk-3-dev,
+               valac (>= 0.16)
+Standards-Version: 3.9.3
+
+Package: Circuitent
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: Circuitent
+ This is Circuitent written in Vala using CMake build system.

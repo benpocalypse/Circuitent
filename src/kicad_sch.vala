@@ -11,7 +11,7 @@ public class Kicad_sch
         WIRE,
         NO_CONNECT
     }
-    
+
     public Header FileHeader;
     public List<Component> Components;
     public List<Wire> Wires;
@@ -23,8 +23,12 @@ public class Kicad_sch
     public Kicad_sch(string filename)
     {
         fMode = FileMode.UNKNOWN;
-        Filename = filename;
-        ParseFile(Filename);
+
+        if (filename != "")
+        {
+            Filename = filename;
+            ParseFile(Filename);
+        }
     }
 
     public void Print()
@@ -50,7 +54,7 @@ public class Kicad_sch
         {
             stdout.printf("Wire: %d, %d, %d, %d\n", w.StartX, w.StartY, w.EndX, w.EndY);
         }
-        
+
     }
 
 
@@ -60,24 +64,24 @@ public class Kicad_sch
         Components = new List<Component> ();
         Wires = new List<Wire> ();
         NoConnects = new List<NoConnect> ();
-        
+
         var file = File.new_for_path (filename);
 
-        if (!file.query_exists ()) 
+        if (!file.query_exists ())
         {
             stderr.printf ("File '%s' doesn't exist.\n", file.get_path ());
             return false;
         }
 
-        try 
+        try
         {
             var dis = new DataInputStream (file.read ());
 
-            
+
             string line;
-            
+
             // Read lines until end of file (null) is reached
-            while ((line = dis.read_line (null)) != null) 
+            while ((line = dis.read_line (null)) != null)
             {
                 string[] tokens = line.split(" ");
 
@@ -106,17 +110,17 @@ public class Kicad_sch
                             {
                                 fMode = FileMode.WIRE;
                                 stdout.printf("%s\n", fMode.to_string());
-                                
+
                                 var wireline = dis.read_line (null);
                                 string[] wiretokens = wireline.split(" ");
 
-                                
-                                Wires.append(new Wire(int.parse(wiretokens[0]), 
+
+                                Wires.append(new Wire(int.parse(wiretokens[0]),
                                                       int.parse(wiretokens[1]),
                                                       int.parse(wiretokens[2]),
                                                       int.parse(wiretokens[3])));
-                                
-                                
+
+
                                 fMode = FileMode.UNKNOWN;
                             }
                             break;
@@ -126,7 +130,7 @@ public class Kicad_sch
                             NoConnects.append (new NoConnect (int.parse (tokens[2]), int.parse (tokens[3])));
                             fMode = FileMode.UNKNOWN;
                             break;
-                            
+
                         default:
                             break;
                     }
@@ -137,12 +141,12 @@ public class Kicad_sch
                     case FileMode.COMPONENT:
                         break;
                 }
-                
+
                 //stdout.printf("%s\n", fMode.to_string());
                 //stdout.printf ("%s, tokens = %d\n", line, tokens.length);
             }
-        } 
-        catch (Error e) 
+        }
+        catch (Error e)
         {
             error ("%s", e.message);
         }
@@ -153,13 +157,13 @@ public class Kicad_sch
     private bool ParseComponent(DataInputStream dis)
     {
         Component newComponent = new Component();
-        
+
         var line = dis.read_line (null);
-        
+
         if(line != null)
         {
             var tokens = line.split(" ");
-            
+
             while(tokens[0].up() != "$ENDCOMP")
             {
                 stdout.printf("ParseComponent: %s\n", tokens[0]);
@@ -219,7 +223,7 @@ public class Header
 {
     public string Version;
     public List<string> Libraries;
-    public string Description;   
+    public string Description;
 }
 
 public class Field
@@ -239,7 +243,7 @@ public class Field
     public Field()
     {
     }
-    
+
     public Field.withContents(int num, string text, string orient, int px, int py,
                               int dim, int vis, string just, string style, string name)
     {
@@ -270,7 +274,7 @@ public class Component
                          int dim, int vis, string just, string style, string name)
     {
         Field test = new Field();
-        
+
         test.Number = num;
         test.Text = text;
         test.Orientation = orient;
@@ -281,7 +285,7 @@ public class Component
         test.Justification = just;
         test.Style = style;
         test.Name = name;
-        
+
         Fields.append(test);
     }
 }

@@ -5,12 +5,6 @@ project('com.github.benpocalypse.circuitent', ['vala', 'c'],
 gnome = import('gnome')
 i18n = import('i18n')
 
-asresources = gnome.compile_resources(
-    'as-resources', 'data/css.gresource.xml',
-    source_dir: 'data',
-    c_name: 'as'
-)
-
 conf = configuration_data()
 conf.set_quoted('GETTEXT_PACKAGE', meson.project_name())
 configure_file(output: 'config.h', configuration: conf)
@@ -25,10 +19,8 @@ m_dep = cc.find_library('m', required : false)
 
 executable(
     meson.project_name(),
-    'src/Application.vala',
-    'src/GradeLabel.vala',
-    'src/MainWindow.vala',
-    asresources,
+    'src/circuitent.vala',
+    'src/kicad_sch.vala',
     c_args: c_args,
     dependencies: [
         dependency('glib-2.0'),
@@ -39,7 +31,6 @@ executable(
     install: true
 )
 subdir('data')
-subdir('po')
 
 meson.add_install_script('meson/post_install.py')
 
