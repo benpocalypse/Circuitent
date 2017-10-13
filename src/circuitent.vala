@@ -41,16 +41,22 @@ namespace com.github.benpocalypse.circuitent
                          | Gdk.EventMask.SCROLL_MASK
                          | Gdk.EventMask.BUTTON_RELEASE_MASK
                          | Gdk.EventMask.POINTER_MOTION_MASK);
-                         
-    //         show_scrollbars (true);
 
              sch = new Kicad_sch ("");
+             
+             this.width_request = 800;
+             this.height_request = 600;
+             
+             stdout.printf("Width: %f, Height: %f\n", this.get_allocated_width (), 
+                            this.get_allocated_height ());
          }
 
 
          public bool Open(string filename)
          {
             sch = new Kicad_sch (filename);
+            //sch.Print ();
+            
             redraw_canvas ();
 
             return true;
@@ -118,9 +124,16 @@ namespace com.github.benpocalypse.circuitent
 
          public override bool draw (Cairo.Context cr)
          {
+            stdout.printf("Width: %f, Height: %f\n", this.get_allocated_width (), 
+                            this.get_allocated_height ());
+                            
+             // FIXME - figure out how/why this doesn't work
+             stdout.printf("Mouse X: %f, Mouse Y :%f, iZoomFactor: %f\n", 
+                            mouseX, mouseY, iZoomFactor);
+                           
              cr.translate(mouseX, mouseY);
              cr.scale(iZoomFactor, iZoomFactor);
-             cr.translate(-mouseX, -mouseY);
+             cr.translate(-(mouseX), -(mouseY));
 
              // First draw circles (this is just a debug thing to track drawing operations)
              for(int i = 0; i < circlesX.length; i++)
@@ -139,6 +152,7 @@ namespace com.github.benpocalypse.circuitent
                  cr.restore ();
              }
 
+             // FIXME - might want to remove this to make it appear more 'vectory'
              cr.set_line_width(iZoomFactor);
 
              DrawWires (cr);
@@ -170,13 +184,13 @@ namespace com.github.benpocalypse.circuitent
 
          public override bool button_press_event (Gdk.EventButton event)
          {
-             mouseX = event.x;
-             mouseY = event.y;
+             //mouseX = event.x;
+             //mouseY = event.y;
 
-             stdout.printf("Drawing Area clicked, x = %f, y = %f\n", mouseX, mouseY);
+             stdout.printf("Drawing Area clicked, x = %f, y = %f\n", event.x, event.y);
 
-             circlesX += mouseX;
-             circlesY += mouseY;
+             circlesX += (event.x);
+             circlesY += (event.y);
 
              return false;
          }
@@ -202,6 +216,11 @@ namespace com.github.benpocalypse.circuitent
          public override bool motion_notify_event (Gdk.EventMotion event)
          {
              //stdout.printf("Drawing Area motion: %f, %f\n", event.x, event.y);
+             
+             //mouseX = event.x;
+             //mouseY = event.y;
+             
+             redraw_canvas ();
 
              return false;
          }
@@ -234,11 +253,11 @@ namespace com.github.benpocalypse.circuitent
             Object
             (
                 application: application,
-                height_request: 600,
+                height_request: 480,
                 icon_name: "com.github.benpocalypse.circuitent",
                 resizable: true,
                 title: _("Circuitent"),
-                width_request: 800
+                width_request: 640
             );
         }
 
@@ -302,8 +321,40 @@ namespace com.github.benpocalypse.circuitent
             stdout.printf("this.icon_name = %s\n", this.icon_name);
 
             Gtk.Stack stack = new Gtk.Stack ();
-            stack.add_titled (da, "Schematic", "Schematic");
+            
+            
+            Gtk.Paned paneSchematic = new Gtk.Paned (Gtk.Orientation.HORIZONTAL);
+            paneSchematic.pack1 (da,true, true);
+            //Gtk.Box commandBox = new Gtk.Box (Gtk.Orientation.VERTICAL, 5);
+            Gtk.FlowBox commandBox = new Gtk.FlowBox ();
+            commandBox.width_request = 32;
+            commandBox.height_request = 32;
+            commandBox.valign = Gtk.Align.START;
+            commandBox.homogeneous = false;
+            commandBox.row_spacing = 0;
+            commandBox.column_spacing = 0;
+            paneSchematic.pack2 (commandBox, false, false);
+            Gtk.ToggleButton buttonSelect = new Gtk.ToggleButton ();
+            Gtk.Image btnImage1 = new Gtk.Image.from_file ("select-pointer.png");
+            buttonSelect.set_image (btnImage1);
+            buttonSelect.width_request = 32;
+            buttonSelect.height_request = 32;   
+            buttonSelect.valign = Gtk.Align.START;
+            Gtk.ToggleButton buttonComponent = new Gtk.ToggleButton ();
+            Gtk.Image btnImage2 = new Gtk.Image.from_file ("place-component.png");
+            buttonComponent.set_image (btnImage2);
+            buttonComponent.width_request = 32;
+            buttonComponent.height_request = 32;
+            buttonComponent.valign = Gtk.Align.START;
+            commandBox.insert (buttonSelect, 0);
+            commandBox.insert (buttonComponent, 1);
+            
+            
+            stack.add_titled (paneSchematic, "Schematic", "Schematic");
+            stack.add_titled (new CircuitentDrawingSurface (), "Library", "Library");
             stack.add_titled (new CircuitentDrawingSurface (), "Component", "Component");
+            stack.add_titled (new CircuitentDrawingSurface (), "Footprint", "Footprint");
+            stack.add_titled (new CircuitentDrawingSurface (), "Layout", "Layout");
             stack.set_transition_type (Gtk.StackTransitionType.SLIDE_LEFT_RIGHT);
             stack.set_valign (Gtk.Align.FILL);
 
