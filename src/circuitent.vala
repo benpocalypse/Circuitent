@@ -43,11 +43,11 @@ namespace com.github.benpocalypse.circuitent
                          | Gdk.EventMask.POINTER_MOTION_MASK);
 
              sch = new Kicad_sch ("");
-             
+
              this.width_request = 800;
              this.height_request = 600;
-             
-             stdout.printf("Width: %f, Height: %f\n", this.get_allocated_width (), 
+
+             stdout.printf("Width: %f, Height: %f\n", this.get_allocated_width (),
                             this.get_allocated_height ());
          }
 
@@ -56,7 +56,7 @@ namespace com.github.benpocalypse.circuitent
          {
             sch = new Kicad_sch (filename);
             //sch.Print ();
-            
+
             redraw_canvas ();
 
             return true;
@@ -124,13 +124,13 @@ namespace com.github.benpocalypse.circuitent
 
          public override bool draw (Cairo.Context cr)
          {
-            stdout.printf("Width: %f, Height: %f\n", this.get_allocated_width (), 
+            stdout.printf("Width: %f, Height: %f\n", this.get_allocated_width (),
                             this.get_allocated_height ());
-                            
+
              // FIXME - figure out how/why this doesn't work
-             stdout.printf("Mouse X: %f, Mouse Y :%f, iZoomFactor: %f\n", 
+             stdout.printf("Mouse X: %f, Mouse Y :%f, iZoomFactor: %f\n",
                             mouseX, mouseY, iZoomFactor);
-                           
+
              cr.translate(mouseX, mouseY);
              cr.scale(iZoomFactor, iZoomFactor);
              cr.translate(-(mouseX), -(mouseY));
@@ -139,9 +139,9 @@ namespace com.github.benpocalypse.circuitent
              for(int i = 0; i < circlesX.length; i++)
              {
                  cr.save ();
-                 
+
                  //cr.set_line_width(iZoomFactor);
-                 
+
                  cr.new_path();
                  cr.arc (circlesX[i], circlesY[i], 5, 0, 2 * Math.PI);
                  cr.set_source_rgb (1, 1, 1);
@@ -216,10 +216,10 @@ namespace com.github.benpocalypse.circuitent
          public override bool motion_notify_event (Gdk.EventMotion event)
          {
              //stdout.printf("Drawing Area motion: %f, %f\n", event.x, event.y);
-             
+
              //mouseX = event.x;
              //mouseY = event.y;
-             
+
              redraw_canvas ();
 
              return false;
@@ -229,8 +229,8 @@ namespace com.github.benpocalypse.circuitent
         private void redraw_canvas ()
         {
             var window = get_window ();
-            
-            if (null == window) 
+
+            if (null == window)
             {
                 return;
             }
@@ -321,11 +321,13 @@ namespace com.github.benpocalypse.circuitent
             stdout.printf("this.icon_name = %s\n", this.icon_name);
 
             Gtk.Stack stack = new Gtk.Stack ();
-            
-            
+
+
             Gtk.Paned paneSchematic = new Gtk.Paned (Gtk.Orientation.HORIZONTAL);
             paneSchematic.pack1 (da,true, true);
+
             //Gtk.Box commandBox = new Gtk.Box (Gtk.Orientation.VERTICAL, 5);
+
             Gtk.FlowBox commandBox = new Gtk.FlowBox ();
             commandBox.width_request = 32;
             commandBox.height_request = 32;
@@ -334,22 +336,63 @@ namespace com.github.benpocalypse.circuitent
             commandBox.row_spacing = 0;
             commandBox.column_spacing = 0;
             paneSchematic.pack2 (commandBox, false, false);
+
             Gtk.ToggleButton buttonSelect = new Gtk.ToggleButton ();
-            Gtk.Image btnImage1 = new Gtk.Image.from_file ("select-pointer.png");
-            buttonSelect.set_image (btnImage1);
+            Gtk.Image imgButtonSelect = new Gtk.Image.from_file ("com.github.benpocalypse.pointer_select.png");
+            buttonSelect.set_image (imgButtonSelect);
             buttonSelect.width_request = 32;
-            buttonSelect.height_request = 32;   
+            buttonSelect.height_request = 32;
             buttonSelect.valign = Gtk.Align.START;
+            commandBox.insert (buttonSelect, 0);
+
             Gtk.ToggleButton buttonComponent = new Gtk.ToggleButton ();
-            Gtk.Image btnImage2 = new Gtk.Image.from_file ("place-component.png");
-            buttonComponent.set_image (btnImage2);
+            Gtk.Image imgButtonComponent = new Gtk.Image.from_file ("com.github.benpocalypse.place_component.png");
+            buttonComponent.set_image (imgButtonComponent);
             buttonComponent.width_request = 32;
             buttonComponent.height_request = 32;
             buttonComponent.valign = Gtk.Align.START;
-            commandBox.insert (buttonSelect, 0);
             commandBox.insert (buttonComponent, 1);
-            
-            
+
+            Gtk.ToggleButton buttonDrawWire = new Gtk.ToggleButton ();
+            Gtk.Image imgButtonDrawWire = new Gtk.Image.from_file ("com.github.benpocalypse.draw_wire.png");
+            buttonDrawWire.set_image (imgButtonDrawWire);
+            buttonDrawWire.width_request = 32;
+            buttonDrawWire.height_request = 32;
+            buttonDrawWire.valign = Gtk.Align.START;
+            commandBox.insert (buttonDrawWire, 2);
+
+            Gtk.ToggleButton buttonDrawNoConnect = new Gtk.ToggleButton ();
+            Gtk.Image imgButtonDrawNoconnect = new Gtk.Image.from_file ("com.github.benpocalypse.draw_no_connect.png");
+            buttonDrawNoConnect.set_image (imgButtonDrawNoconnect);
+            buttonDrawNoConnect.width_request = 32;
+            buttonDrawNoConnect.height_request = 32;
+            buttonDrawNoConnect.valign = Gtk.Align.START;
+            commandBox.insert (buttonDrawNoConnect, 3);
+
+            Gtk.ToggleButton buttonDrawLocalNet = new Gtk.ToggleButton ();
+            Gtk.Image imgButtonDrawLocalNet = new Gtk.Image.from_file ("com.github.benpocalypse.draw_local_net.png");
+            buttonDrawLocalNet.set_image (imgButtonDrawLocalNet);
+            buttonDrawLocalNet.width_request = 32;
+            buttonDrawLocalNet.height_request = 32;
+            buttonDrawLocalNet.valign = Gtk.Align.START;
+            commandBox.insert (buttonDrawLocalNet, 4);
+
+            Gtk.ToggleButton buttonDrawGlobalNet = new Gtk.ToggleButton ();
+            Gtk.Image imgButtonDrawGlobalNet = new Gtk.Image.from_file ("com.github.benpocalypse.draw_global_net.png");
+            buttonDrawGlobalNet.set_image (imgButtonDrawGlobalNet);
+            buttonDrawGlobalNet.width_request = 32;
+            buttonDrawGlobalNet.height_request = 32;
+            buttonDrawGlobalNet.valign = Gtk.Align.START;
+            commandBox.insert (buttonDrawGlobalNet, 5);
+
+            Gtk.ToggleButton buttonDrawText = new Gtk.ToggleButton ();
+            Gtk.Image imgButtonDrawText = new Gtk.Image.from_file ("com.github.benpocalypse.draw_text.png");
+            buttonDrawText.set_image (imgButtonDrawText);
+            buttonDrawText.width_request = 32;
+            buttonDrawText.height_request = 32;
+            buttonDrawText.valign = Gtk.Align.START;
+            commandBox.insert (buttonDrawText, 6);
+
             stack.add_titled (paneSchematic, "Schematic", "Schematic");
             stack.add_titled (new CircuitentDrawingSurface (), "Library", "Library");
             stack.add_titled (new CircuitentDrawingSurface (), "Component", "Component");
@@ -430,9 +473,9 @@ namespace com.github.benpocalypse.circuitent
             add_action (quit_action);
             add_accelerator ("<Control>q", "app.quit", null);
 
-            quit_action.activate.connect (() => 
+            quit_action.activate.connect (() =>
             {
-                if (app_window != null) 
+                if (app_window != null)
                 {
                     app_window.destroy ();
                 }
