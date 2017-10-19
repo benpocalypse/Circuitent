@@ -20,6 +20,9 @@ m_dep = cc.find_library('m', required : false)
 executable(
     meson.project_name(),
     'src/circuitent.vala',
+    'src/library_editor.vala',
+    'src/library_entry.vala',
+    'src/circuitent_drawing_surface.vala',
     'src/kicad_sch.vala',
     c_args: c_args,
     dependencies: [
