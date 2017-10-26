@@ -24,42 +24,30 @@ namespace com.github.benpocalypse.circuitent
 {
     public class CircuitentDrawingSurface : DrawingArea
     {
-         private bool dragging;
-         private double mouseX;
-         private double mouseY;
-         private double[] circlesX = {};
-         private double[] circlesY = {};
+        private bool dragging;
+        private double mouseX;
+        private double mouseY;
 
-         private double iZoomFactor = 1;
+        private double iZoomFactor = 1;
+        private const int Width = 1027;
+        private const int Height = 768;
 
-         public Kicad_sch sch;
+        public signal void LeftButtonClicked (double x, double y);
+        public signal void RightButtonClicked (double x, double y);
 
-         public CircuitentDrawingSurface ()
-         {
-             add_events (Gdk.EventMask.BUTTON_PRESS_MASK
-                         | Gdk.EventMask.SCROLL_MASK
-                         | Gdk.EventMask.BUTTON_RELEASE_MASK
-                         | Gdk.EventMask.POINTER_MOTION_MASK);
+        public CircuitentDrawingSurface ()
+        {
+            add_events (Gdk.EventMask.BUTTON_PRESS_MASK
+                        | Gdk.EventMask.SCROLL_MASK
+                        | Gdk.EventMask.BUTTON_RELEASE_MASK
+                        | Gdk.EventMask.POINTER_MOTION_MASK);
 
-             sch = new Kicad_sch ("");
+            this.width_request = Width;
+            this.height_request = Height;
 
-             this.width_request = 640;
-             this.height_request = 480;
-
-             stdout.printf("Width: %f, Height: %f\n", this.get_allocated_width (),
-                            this.get_allocated_height ());
-         }
-
-
-         public bool Open(string filename)
-         {
-            sch = new Kicad_sch (filename);
-            //sch.Print ();
-
-            redraw_canvas ();
-
-            return true;
-         }
+            stdout.printf("Width: %f, Height: %f\n", this.get_allocated_width (),
+                           this.get_allocated_height ());
+        }
 
 
          public void ResetZoom ()
@@ -68,14 +56,16 @@ namespace com.github.benpocalypse.circuitent
             mouseY = 0;
             mouseX = 0;
 
+            this.width_request = Width;
+            this.height_request = Height;
+
             redraw_canvas ();
          }
 
 
          public void DrawWires(Cairo.Context cr)
          {
-             //cr.save ();
-
+            /*
              foreach(WireSegment w in sch.Wires)
              {
                  cr.set_source_rgb (0, 0, 0);
@@ -83,14 +73,14 @@ namespace com.github.benpocalypse.circuitent
                  cr.move_to (w.StartX/10, w.StartY/10);
                  cr.line_to (w.EndX/10, w.EndY/10);
                  cr.stroke ();
-                 //cr.close_path ();
              }
-             //cr.restore ();
+             */
          }
 
 
          public void DrawComponents(Cairo.Context cr)
          {
+            /*
              foreach (Component c in sch.Components)
              {
                  cr.set_source_rgb (1, 0, 0);
@@ -103,11 +93,13 @@ namespace com.github.benpocalypse.circuitent
                  cr.move_to ((c.PositionX/10) + 30, (c.PositionY/10) + 30);
                  cr.show_text (c.Name);
              }
+             */
          }
 
 
          public void DrawNoConnects(Cairo.Context cr)
          {
+         /*
              foreach (NoConnect nc in sch.NoConnects)
              {
                  cr.set_source_rgb (0, 0, 0);
@@ -118,14 +110,16 @@ namespace com.github.benpocalypse.circuitent
                  cr.line_to ((nc.X/10) - 5, (nc.Y/10) + 5);
                  cr.stroke ();
              }
+             */
          }
 
 
          public override bool draw (Cairo.Context cr)
          {
-            stdout.printf("Width: %f, Height: %f\n", this.get_allocated_width (),
-                            this.get_allocated_height ());
+            //stdout.printf("Width: %f, Height: %f\n", this.get_allocated_width (),
+            //                this.get_allocated_height ());
 
+/*
              // FIXME - figure out how/why this doesn't work
              stdout.printf("Mouse X: %f, Mouse Y :%f, iZoomFactor: %f\n",
                             mouseX, mouseY, iZoomFactor);
@@ -157,8 +151,8 @@ namespace com.github.benpocalypse.circuitent
              DrawWires (cr);
              DrawComponents (cr);
              DrawNoConnects (cr);
-
-             return false;
+*/
+             return true;
          }
 
 
@@ -175,6 +169,9 @@ namespace com.github.benpocalypse.circuitent
              mouseX = event.x;
              mouseY = event.y;
 
+             this.width_request = (int)(iZoomFactor * (float)Width);
+             this.height_request = (int)(iZoomFactor * (float)Height);
+
              redraw_canvas ();
 
              return false;
@@ -183,13 +180,10 @@ namespace com.github.benpocalypse.circuitent
 
          public override bool button_press_event (Gdk.EventButton event)
          {
-             //mouseX = event.x;
-             //mouseY = event.y;
-
              stdout.printf("Drawing Area clicked, x = %f, y = %f\n", event.x, event.y);
 
-             circlesX += (event.x);
-             circlesY += (event.y);
+             //circlesX += (event.x);
+             //circlesY += (event.y);
 
              return false;
          }
@@ -197,7 +191,17 @@ namespace com.github.benpocalypse.circuitent
 
          public override bool button_release_event (Gdk.EventButton event)
          {
-             stdout.printf("Drawing Area un-clicked!\n");
+             stdout.printf("Drawing Area un-clicked: %u\n", event.button);
+
+            if (event.button == 1)
+            {
+                LeftButtonClicked (event.x, event.y);
+            }
+
+            if (event.button == 3)
+            {
+                RightButtonClicked (event.x, event.y);
+            }
 
              redraw_canvas ();
 
@@ -219,7 +223,8 @@ namespace com.github.benpocalypse.circuitent
              //mouseX = event.x;
              //mouseY = event.y;
 
-             redraw_canvas ();
+            // No reason to do this here when the mouse moves.
+            // redraw_canvas ();
 
              return false;
          }

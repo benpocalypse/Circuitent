@@ -22,7 +22,7 @@ using Gtk;
 
 namespace com.github.benpocalypse.circuitent
 {
-    public class LibraryEditor : Gtk.Paned
+    public class LibraryEditor : Gtk.Paned, IEditor
     {
         private CircuitentDrawingSurface dsLibrary;
         //private Gtk.Paned paneLibrary;
@@ -32,8 +32,11 @@ namespace com.github.benpocalypse.circuitent
         public LibraryEditor ()
         {
             this.set_orientation (Gtk.Orientation.HORIZONTAL);
+
             dsLibrary = new CircuitentDrawingSurface();
-            //paneLibrary = new Gtk.Paned (Gtk.Orientation.HORIZONTAL);
+            dsLibrary.LeftButtonClicked.connect (LeftButtonClicked);
+            dsLibrary.RightButtonClicked.connect (RightButtonClicked);
+
             viewLibraries = new Gtk.TreeView ();
             storeLibraries = new Gtk.TreeStore (5, typeof (string),
                                                    typeof (string),
@@ -74,6 +77,25 @@ namespace com.github.benpocalypse.circuitent
             this.pack1 (viewLibraries, true, true);
             this.pack2 (dsLibrary, true, true);
             this.set_border_width (0);
+        }
+
+        public void LeftButtonClicked (CircuitentDrawingSurface sender, double x, double y)
+        {
+            stdout.printf ("Left Button Clicked: %f, %f\n", x, y);
+        }
+
+        public void RightButtonClicked (CircuitentDrawingSurface sender, double x, double y)
+        {
+            stdout.printf ("Right Button Clicked: %f, %f\n", x, y);
+        }
+
+        public void Open (string filename)
+        {
+
+        }
+
+        public void ResetZoom ()
+        {
         }
     }
 }
